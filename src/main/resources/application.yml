@@ -1,0 +1,9 @@
+mongodb:
+    uri: mongodb://${MONGO_DB_USER:master}:${MONGO_DB_PASSWORD:master123}@${MONGO_DB_HOST:localhost}:${MONGO_DB_PORT:27017}/shared-storage
+#  uri: mongodb://${MONGO_DB_USER:master}:${MONGO_DB_PASSWORD:master123}@ds129936.mlab.com:29936/shared-storage
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework: INFO
+    org.springframework.data.neo4j: INFO

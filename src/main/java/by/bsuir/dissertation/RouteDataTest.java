@@ -1,9 +1,5 @@
 package by.bsuir.dissertation;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.events.LearningEvent;
 import org.neuroph.core.events.LearningEventListener;
@@ -16,9 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
-public class CarEvaluation implements LearningEventListener {
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(CarEvaluation.class);
+public class RouteDataTest implements LearningEventListener {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(RouteDataTest.class);
 
     public void run() {
         File file;
