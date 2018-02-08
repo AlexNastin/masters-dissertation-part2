@@ -1,8 +1,13 @@
 package by.bsuir.dissertation.entity.neuroph;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Arrays;
 import java.util.Objects;
 
+@Getter
+@Setter
 public class NormalizeRow {
 
     private double carId;
@@ -20,46 +25,6 @@ public class NormalizeRow {
         this.time = time;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    public double getCarId() {
-        return carId;
-    }
-
-    public void setCarId(double carId) {
-        this.carId = carId;
-    }
-
-    public int[] getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    public void setDayOfWeek(int[] dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
-    }
-
-    public double getTime() {
-        return time;
-    }
-
-    public void setTime(double time) {
-        this.time = time;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double x) {
-        this.latitude = x;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double y) {
-        this.longitude = y;
     }
 
     @Override

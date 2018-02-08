@@ -2,7 +2,6 @@ package by.bsuir.dissertation.entity.graph;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jgrapht.graph.DefaultEdge;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Document(collection = "edge")
-public class Edge extends DefaultEdge {
+public class Edge {
 
     @Id
     private String id = UUID.randomUUID().toString();

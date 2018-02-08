@@ -1,5 +1,6 @@
 package by.bsuir.dissertation.entity.result;
 
+import by.bsuir.dissertation.entity.graph.Node;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;

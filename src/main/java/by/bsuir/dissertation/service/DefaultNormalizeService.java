@@ -1,17 +1,30 @@
 package by.bsuir.dissertation.service;
 
-import by.bsuir.dissertation.entity.result.ResultData;
 import by.bsuir.dissertation.entity.neuroph.NormalizeRow;
-import by.bsuir.dissertation.util.NormalizeUtils;
+import by.bsuir.dissertation.entity.result.ResultData;
 import by.bsuir.dissertation.repository.ResultDataRepository;
+import by.bsuir.dissertation.util.NormalizeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class DefaultNormalizeService implements NormalizeService {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(DefaultNormalizeService.class);
+
+    private static final String PATH_TO_FILE = "src/main/resources/data-set/data-set.txt";
+    private static final String DELIMITER = ",";
 
     private ResultDataRepository resultDataRepository;
 
@@ -37,10 +50,21 @@ public class DefaultNormalizeService implements NormalizeService {
                 normalizeRows.add(normalizeRow);
             });
         });
-
-        // TODO: save data to file using method toFileString in NormalizeRow class
-        // TODO: use ',' delimiter
-
+        saveToFile(normalizeRows);
         normalizeRows.forEach(normalizeRow -> System.out.println(normalizeRow.toString()));
+    }
+
+    private void saveToFile(List<NormalizeRow> normalizeRows) {
+        String fileLocation = new File(PATH_TO_FILE).getAbsolutePath();
+        Path path = Paths.get(fileLocation);
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            for (NormalizeRow normalizeRow : normalizeRows) {
+                writer.write(normalizeRow.toFileString(DELIMITER));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Method saveToFile doesn't work.", e);
+        }
     }
 }
