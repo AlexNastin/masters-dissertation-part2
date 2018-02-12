@@ -11,25 +11,27 @@ import org.neuroph.util.TransferFunctionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class RouteDataTest implements LearningEventListener {
+@Component
+public class CarTrafficDataTest implements LearningEventListener {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(RouteDataTest.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CarTrafficDataTest.class);
 
     public void run() {
         File file;
         try {
-            file = new ClassPathResource("CarEvaluation.txt").getFile();
+            file = new ClassPathResource("data-set.txt").getFile();
         } catch (IOException e) {
             LOGGER.error("", e);
             return;
         }
-        int inputsCount = 21;
-        int outputsCount = 4;
+        int inputsCount = 9;
+        int outputsCount = 2;
 
         LOGGER.info("Training set " + file.getName());
 
@@ -42,7 +44,7 @@ public class RouteDataTest implements LearningEventListener {
         }
 
         LOGGER.info("Create network");
-        MultiLayerPerceptron neuralNet = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, 21, 14, 4);
+        MultiLayerPerceptron neuralNet = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, 9, 5, 2);
         MomentumBackpropagation learningRule = (MomentumBackpropagation) neuralNet.getLearningRule();
         learningRule.addListener(this);
         learningRule.setLearningRate(0.3);
@@ -62,11 +64,11 @@ public class RouteDataTest implements LearningEventListener {
             double[] networkOutput = neuralNet.getOutput();
 
             // rounding up the results to an integer
-            double[] networkOutputRound = new double[networkOutput.length];
-            for (int i = 0; i < networkOutput.length; i++) {
-                networkOutputRound[i] = Math.round(networkOutput[i]);
-            }
-            LOGGER.info("Input: " + Arrays.toString(row.getInput()) + " Output: " + Arrays.toString(networkOutputRound));
+//            double[] networkOutputRound = new double[networkOutput.length];
+//            for (int i = 0; i < networkOutput.length; i++) {
+//                networkOutputRound[i] = Math.round(networkOutput[i]);
+//            }
+            LOGGER.info("Input: " + Arrays.toString(row.getInput()) + " Output: " + Arrays.toString(networkOutput));
         });
     }
 

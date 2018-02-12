@@ -23,7 +23,7 @@ public class DefaultNormalizeService implements NormalizeService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DefaultNormalizeService.class);
 
-    private static final String PATH_TO_FILE = "src/main/resources/data-set/data-set.txt";
+    private static final String PATH_TO_FILE = "src/main/resources/data-set.txt";
     private static final String DELIMITER = ",";
 
     private ResultDataRepository resultDataRepository;

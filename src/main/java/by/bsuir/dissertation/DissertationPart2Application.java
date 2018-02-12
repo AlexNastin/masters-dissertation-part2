@@ -1,7 +1,6 @@
 package by.bsuir.dissertation;
 
 import by.bsuir.dissertation.configuration.MongoConfiguration;
-import by.bsuir.dissertation.service.NormalizeService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,9 +16,9 @@ public class DissertationPart2Application {
     }
 
     @Bean
-    public CommandLineRunner run(NormalizeService normalizeService) {
+    public CommandLineRunner run(CarTrafficDataTest carTrafficDataTest) {
         return args -> {
-            normalizeService.normalizeDataAndSaveToFile();
+            carTrafficDataTest.run();
         };
     }
 }
