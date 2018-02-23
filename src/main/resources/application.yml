@@ -7,3 +7,10 @@ logging:
     ROOT: INFO
     org.springframework: INFO
     org.springframework.data.neo4j: INFO
+
+spring:
+  thymeleaf:
+    cache: false
+    enabled: true
+    prefix: classpath:/view/
+    suffix: .html
