@@ -3,6 +3,7 @@ package by.bsuir.dissertation.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 /**
  * @author Stepanov Nickita on 04.02.2018.
@@ -12,6 +13,10 @@ public class NormalizeUtils {
 
     public static double normalize(double value, double minValue, double maxValue) {
         return (value - minValue) / (maxValue - minValue);
+    }
+
+    public static double denormalize(double value, double minValue, double maxValue) {
+        return value * (maxValue - minValue) + minValue;
     }
 
     public static double normalizeTime(Date date) {
@@ -35,5 +40,9 @@ public class NormalizeUtils {
         int[] result = new int[rank];
         result[numberOfActiveRank - 1] = 1;
         return result;
+    }
+
+    public static int getTrueHash(Object object) {
+	    return Math.abs(Objects.hash(object));
     }
 }

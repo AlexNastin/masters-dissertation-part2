@@ -1,5 +1,9 @@
 package by.bsuir.dissertation;
 
+import by.bsuir.dissertation.configuration.NeuralNetworkConfiguration;
+import by.bsuir.dissertation.entity.neuroph.RequestData;
+import by.bsuir.dissertation.entity.neuroph.ResponseData;
+import by.bsuir.dissertation.util.NormalizeUtils;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.events.LearningEvent;
 import org.neuroph.core.events.LearningEventListener;
@@ -10,51 +14,59 @@ import org.neuroph.util.TrainingSetImport;
 import org.neuroph.util.TransferFunctionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class CarTrafficDataTest implements LearningEventListener {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CarTrafficDataTest.class);
 
-    public void run() {
+    private MultiLayerPerceptron neuralNet;
+
+    private NeuralNetworkConfiguration neuralNetworkConfiguration;
+
+    @Autowired
+    public CarTrafficDataTest(NeuralNetworkConfiguration neuralNetworkConfiguration) {
+        this.neuralNetworkConfiguration = neuralNetworkConfiguration;
+        run();
+    }
+
+    private void run() {
+        neuralNet = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, neuralNetworkConfiguration.getInputCount(), neuralNetworkConfiguration.getMiddleCount(), neuralNetworkConfiguration.getOutputCount());
         File file;
         try {
-            file = new ClassPathResource("data-set.txt").getFile();
+            file = new ClassPathResource(neuralNetworkConfiguration.getNameTrainingSet()).getFile();
         } catch (IOException e) {
             LOGGER.error("", e);
             return;
         }
-        int inputsCount = 9;
-        int outputsCount = 2;
 
         LOGGER.info("Training set " + file.getName());
 
         DataSet trainingSet;
         try {
-            trainingSet = TrainingSetImport.importFromFile(file.getAbsolutePath(), inputsCount, outputsCount, ",");
+            trainingSet = TrainingSetImport.importFromFile(file.getAbsolutePath(), neuralNetworkConfiguration.getInputCount(), neuralNetworkConfiguration.getOutputCount(), ",");
         } catch (IOException | NumberFormatException e) {
             LOGGER.error("", e);
             return;
         }
 
         LOGGER.info("Create network");
-        MultiLayerPerceptron neuralNet = new MultiLayerPerceptron(TransferFunctionType.SIGMOID, 9, 5, 2);
         MomentumBackpropagation learningRule = (MomentumBackpropagation) neuralNet.getLearningRule();
         learningRule.addListener(this);
         learningRule.setLearningRate(0.3);
         learningRule.setMomentum(0.6);
         learningRule.setMaxError(0.05);
 
-//        BackPropagation backPropagation = new BackPropagation();
-//        backPropagation.setMaxIterations(1000);
         LOGGER.info("Training network");
-//        neuralNet.learn(trainingSet, backPropagation);
         neuralNet.learn(trainingSet);
 
         LOGGER.info("Test network");
@@ -63,13 +75,29 @@ public class CarTrafficDataTest implements LearningEventListener {
             neuralNet.calculate();
             double[] networkOutput = neuralNet.getOutput();
 
-            // rounding up the results to an integer
-//            double[] networkOutputRound = new double[networkOutput.length];
-//            for (int i = 0; i < networkOutput.length; i++) {
-//                networkOutputRound[i] = Math.round(networkOutput[i]);
-//            }
             LOGGER.info("Input: " + Arrays.toString(row.getInput()) + " Output: " + Arrays.toString(networkOutput));
         });
+    }
+
+    public ResponseData getCoordinates(RequestData requestData) {
+        List<Double> input = new ArrayList<>();
+        input.add(NormalizeUtils.normalize(NormalizeUtils.getTrueHash(requestData.getId()), 0, Integer.MAX_VALUE));
+        int[] daysOfWeek = NormalizeUtils.normalizeDayOfWeek(requestData.getDate());
+        for (int day : daysOfWeek) {
+            input.add((double) day);
+        }
+        input.add(NormalizeUtils.normalizeTime(requestData.getDate()));
+        double[] resultInput = new double[input.size()];
+        for (int i = 0; i < resultInput.length; i++) {
+            resultInput[i] = input.get(i);
+        }
+        neuralNet.setInput(resultInput);
+        neuralNet.calculate();
+        double[] networkOutput = neuralNet.getOutput();
+        ResponseData responseData = new ResponseData(NormalizeUtils.denormalize(networkOutput[0], neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude()),
+                NormalizeUtils.denormalize(networkOutput[1], neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude()));
+        LOGGER.info("Input: " + Arrays.toString(resultInput) + " Output: " + Arrays.toString(networkOutput));
+        return responseData;
     }
 
     @Override

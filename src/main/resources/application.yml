@@ -14,3 +14,19 @@ spring:
     enabled: true
     prefix: classpath:/view/
     suffix: .html
+
+neural:
+  network:
+   input: 9
+   middle: 5
+   output: 2
+   trainingset:
+    latitude:
+      min: 53
+      max: 54
+    longitude:
+      min: 28
+      max: 29
+    name: data-set.txt
+    path: src/main/resources/data-set.txt
+   delimiter: ","
