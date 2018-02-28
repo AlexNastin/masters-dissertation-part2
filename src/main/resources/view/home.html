@@ -1,11 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+<!-- AngularJS script -->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"/>
 <body>
-<div>
-    <div>
-        <h1>Html example</h1>
-        <h2>Hello </h2>
+<div ng-app="trafficApp" ng-controller="formCtrl" class="row" style="margin: 5px">
+    <div class="col-sm-6">
+        <form>
+            <div class="form-group">
+                <label for="carIdInput">Car ID</label>
+                <input class="form-control" id="carIdInput" placeholder="Car ID" ng-model="carId"/>
+            </div>
+            <div class="form-group">
+                <label for="dateInput">Date</label>
+                <input type="datetime-local" class="form-control" id="dateInput" placeholder="Date and time"
+                       ng-model="carDate"/>
+            </div>
+            <button type="submit" class="btn btn-primary" ng-click="sendData()">Submit</button>
+        </form>
+    </div>
+    <div class="col-sm-6" style="text-align:center">
+        <span ng-show="isSuccess" class="label label-success">Success query</span>
+        <span ng-show="isError" class="label label-danger">Error</span>
+        <div>
+            <label>Latitude: {{resultData.latitude}}</label>
+        </div>
+        <div>
+            <label>Longitude: {{resultData.longitude}}</label>
+        </div>
     </div>
 </div>
+
+
+<script>
+    var app = angular.module('trafficApp', []);
+    app.controller('formCtrl', function ($scope, $http) {
+        $scope.carId = "7d389e3b-5316-45eb-87bf-87ac72bfcb9c";
+        $scope.carDate = new Date("2018-02-04T11:08");
+        $scope.isSuccess = false;
+        $scope.isError = false;
+        $scope.resultData = {
+            latitude: 0,
+            longitude: 0
+        };
+
+        $scope.sendData = function () {
+            console.log($scope.carId);
+            console.log($scope.carDate.getTime())
+            $http.get("/api/v1/neural-network-service//location/car/" + $scope.carId + "?time=" + $scope.carDate.getTime())
+                .then(function (response) {
+                    if (response.status === 200) {
+                        $scope.isSuccess = true;
+                        $scope.isError = false;
+                        $scope.resultData = response.data;
+                        console.log(response)
+                    } else {
+                        $scope.isSuccess = false;
+                        $scope.isError = true;
+                    }
+                });
+        }
+    });
+</script>
 </body>
 </html>

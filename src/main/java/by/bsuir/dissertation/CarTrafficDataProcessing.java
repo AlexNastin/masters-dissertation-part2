@@ -1,8 +1,7 @@
 package by.bsuir.dissertation;
 
 import by.bsuir.dissertation.configuration.NeuralNetworkConfiguration;
-import by.bsuir.dissertation.entity.neuroph.RequestData;
-import by.bsuir.dissertation.entity.neuroph.ResponseData;
+import by.bsuir.dissertation.entity.exchange.ResponseData;
 import by.bsuir.dissertation.util.NormalizeUtils;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.events.LearningEvent;
@@ -22,19 +21,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
-public class CarTrafficDataTest implements LearningEventListener {
+public class CarTrafficDataProcessing implements LearningEventListener {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(CarTrafficDataTest.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(CarTrafficDataProcessing.class);
 
     private MultiLayerPerceptron neuralNet;
 
     private NeuralNetworkConfiguration neuralNetworkConfiguration;
 
     @Autowired
-    public CarTrafficDataTest(NeuralNetworkConfiguration neuralNetworkConfiguration) {
+    public CarTrafficDataProcessing(NeuralNetworkConfiguration neuralNetworkConfiguration) {
         this.neuralNetworkConfiguration = neuralNetworkConfiguration;
         run();
     }
@@ -79,14 +79,14 @@ public class CarTrafficDataTest implements LearningEventListener {
         });
     }
 
-    public ResponseData getCoordinates(RequestData requestData) {
+    public ResponseData getCoordinates(String id, Date date) {
         List<Double> input = new ArrayList<>();
-        input.add(NormalizeUtils.normalize(NormalizeUtils.getTrueHash(requestData.getId()), 0, Integer.MAX_VALUE));
-        int[] daysOfWeek = NormalizeUtils.normalizeDayOfWeek(requestData.getDate());
+        input.add(NormalizeUtils.normalize(NormalizeUtils.getTrueHash(id), 0, Integer.MAX_VALUE));
+        int[] daysOfWeek = NormalizeUtils.normalizeDayOfWeek(date);
         for (int day : daysOfWeek) {
             input.add((double) day);
         }
-        input.add(NormalizeUtils.normalizeTime(requestData.getDate()));
+        input.add(NormalizeUtils.normalizeTime(date));
         double[] resultInput = new double[input.size()];
         for (int i = 0; i < resultInput.length; i++) {
             resultInput[i] = input.get(i);

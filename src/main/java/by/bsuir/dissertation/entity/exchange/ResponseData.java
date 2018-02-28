@@ -1,4 +1,4 @@
-package by.bsuir.dissertation.entity.neuroph;
+package by.bsuir.dissertation.entity.exchange;
 
 import lombok.Getter;
 import lombok.Setter;
