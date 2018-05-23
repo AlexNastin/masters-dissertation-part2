@@ -4,6 +4,7 @@ import by.bsuir.dissertation.configuration.NeuralNetworkConfiguration;
 import by.bsuir.dissertation.entity.neuroph.Data;
 import by.bsuir.dissertation.entity.neuroph.NormalizeRow;
 import by.bsuir.dissertation.entity.result.ResultData;
+import by.bsuir.dissertation.repository.DataRepository;
 import by.bsuir.dissertation.repository.ResultDataRepository;
 import by.bsuir.dissertation.util.NormalizeUtils;
 import org.slf4j.Logger;
@@ -28,6 +29,9 @@ public class DefaultNormalizeService implements NormalizeService {
     private ResultDataRepository resultDataRepository;
 
     private NeuralNetworkConfiguration neuralNetworkConfiguration;
+
+    @Autowired
+    private DataRepository dataRepository;
 
     @Autowired
     public DefaultNormalizeService(ResultDataRepository resultDataRepository, NeuralNetworkConfiguration neuralNetworkConfiguration) {
@@ -62,6 +66,7 @@ public class DefaultNormalizeService implements NormalizeService {
         saveToFile(normalizeRows);
         normalizeRows.forEach(normalizeRow -> System.out.println(normalizeRow.toString()));
         saveToFileIDtoNormalizeDate(data);
+        dataRepository.save(data);
     }
 
     private void saveToFile(List<NormalizeRow> normalizeRows) {
