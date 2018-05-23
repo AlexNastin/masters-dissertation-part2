@@ -96,6 +96,7 @@ public class CarTrafficDataProcessing implements LearningEventListener {
         double[] networkOutput = neuralNet.getOutput();
         ResponseData responseData = new ResponseData(NormalizeUtils.denormalize(networkOutput[0], neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude()),
                 NormalizeUtils.denormalize(networkOutput[1], neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude()));
+        LOGGER.info("ID: " + id + "Date: " + date);
         LOGGER.info("Input: " + Arrays.toString(resultInput) + " Output: " + Arrays.toString(networkOutput));
         return responseData;
     }

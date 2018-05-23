@@ -2,6 +2,7 @@ package by.bsuir.dissertation.web;
 
 import by.bsuir.dissertation.CarTrafficDataProcessing;
 import by.bsuir.dissertation.entity.exchange.ResponseData;
+import by.bsuir.dissertation.util.NormalizeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,12 @@ public class DataController {
         // use test id: '7d389e3b-5316-45eb-87bf-87ac72bfcb9c' and date '2018-02-04 11:08:49.601'
         ResponseData responseData = carTrafficDataProcessing.getCoordinates(id, new Date(time));
         return new ResponseEntity<>(responseData, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/car/{id}", method = RequestMethod.GET)
+    public ResponseEntity normalizeID(@PathVariable(value = "id") String id) {
+        double normalizeCarId = NormalizeUtils.normalize(NormalizeUtils.getTrueHash(id), 0, Integer.MAX_VALUE);
+        return new ResponseEntity<>(normalizeCarId, HttpStatus.OK);
     }
 }

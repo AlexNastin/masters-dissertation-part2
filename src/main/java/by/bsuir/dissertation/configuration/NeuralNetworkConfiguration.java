@@ -25,6 +25,12 @@ public class NeuralNetworkConfiguration {
     @Value("${neural.network.trainingset.path}")
     private String pathToTrainingSet;
 
+    @Value("${neural.network.trainingset.namenew}")
+    private String namenew;
+
+    @Value("${neural.network.trainingset.pathnew}")
+    private String pathnew;
+
     @Value("${neural.network.delimiter}")
     private String delimiter;
 
@@ -78,5 +84,13 @@ public class NeuralNetworkConfiguration {
 
     public Integer getMinLongitude() {
         return minLongitude;
+    }
+
+    public String getNamenew() {
+        return namenew;
+    }
+
+    public String getPathnew() {
+        return pathnew;
     }
 }

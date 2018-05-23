@@ -1,6 +1,7 @@
 package by.bsuir.dissertation.service;
 
 import by.bsuir.dissertation.configuration.NeuralNetworkConfiguration;
+import by.bsuir.dissertation.entity.neuroph.Data;
 import by.bsuir.dissertation.entity.neuroph.NormalizeRow;
 import by.bsuir.dissertation.entity.result.ResultData;
 import by.bsuir.dissertation.repository.ResultDataRepository;
@@ -38,9 +39,11 @@ public class DefaultNormalizeService implements NormalizeService {
     public void normalizeDataAndSaveToFile() {
         List<ResultData> resultDataList = resultDataRepository.findAll();
         List<NormalizeRow> normalizeRows = new ArrayList<>();
-
+        List<Data> data = new ArrayList<>();
         resultDataList.forEach(resultData -> {
             double normalizeCarId = NormalizeUtils.normalize(NormalizeUtils.getTrueHash(resultData.getCar().getId()), 0, Integer.MAX_VALUE);
+            Data data1 = new Data(resultData.getCar().getId(), normalizeCarId);
+            data.add(data1);
             resultData.getPartResultData().forEach(partResultData -> {
                 NormalizeRow normalizeRow = new NormalizeRow();
                 normalizeRow.setCarId(normalizeCarId);
@@ -53,6 +56,7 @@ public class DefaultNormalizeService implements NormalizeService {
         });
         saveToFile(normalizeRows);
         normalizeRows.forEach(normalizeRow -> System.out.println(normalizeRow.toString()));
+        saveToFileIDtoNormalizeDate(data);
     }
 
     private void saveToFile(List<NormalizeRow> normalizeRows) {
@@ -62,6 +66,20 @@ public class DefaultNormalizeService implements NormalizeService {
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             for (NormalizeRow normalizeRow : normalizeRows) {
                 writer.write(normalizeRow.toFileString(neuralNetworkConfiguration.getDelimiter()));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            LOGGER.error("Method saveToFile doesn't work.", e);
+        }
+    }
+
+    private void saveToFileIDtoNormalizeDate(List<Data> data) {
+        String fileLocation = new File(neuralNetworkConfiguration.getPathnew()).getAbsolutePath();
+        Path path = Paths.get(fileLocation);
+
+        try (BufferedWriter writer = Files.newBufferedWriter(path)) {
+            for (Data data1 : data) {
+                writer.write(data1.toFileString(neuralNetworkConfiguration.getDelimiter()));
                 writer.newLine();
             }
         } catch (IOException e) {

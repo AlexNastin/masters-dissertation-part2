@@ -28,5 +28,7 @@ neural:
       min: 28
       max: 29
     name: data-set.txt
+    namenew: data.txt
     path: src/main/resources/data-set.txt
+    pathnew: src/main/resources/data.txt
    delimiter: ","
