@@ -42,15 +42,18 @@ public class DefaultNormalizeService implements NormalizeService {
         List<Data> data = new ArrayList<>();
         resultDataList.forEach(resultData -> {
             double normalizeCarId = NormalizeUtils.normalize(NormalizeUtils.getTrueHash(resultData.getCar().getId()), 0, Integer.MAX_VALUE);
-            Data data1 = new Data(resultData.getCar().getId(), normalizeCarId);
-            data.add(data1);
+
             resultData.getPartResultData().forEach(partResultData -> {
                 NormalizeRow normalizeRow = new NormalizeRow();
                 normalizeRow.setCarId(normalizeCarId);
+
                 normalizeRow.setDayOfWeek(NormalizeUtils.normalizeDayOfWeek(partResultData.getDate()));
-                normalizeRow.setTime(NormalizeUtils.normalizeTime(partResultData.getDate()));
+                double v = NormalizeUtils.normalizeTime(partResultData.getDate());
+                normalizeRow.setTime(v);
                 normalizeRow.setLatitude(NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLatitude()), neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude()));
                 normalizeRow.setLongitude(NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLongitude()), neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude()));
+                Data data1 = new Data(resultData.getCar().getId(), normalizeCarId, partResultData.getDate(), v);
+                data.add(data1);
                 normalizeRows.add(normalizeRow);
             });
         });
