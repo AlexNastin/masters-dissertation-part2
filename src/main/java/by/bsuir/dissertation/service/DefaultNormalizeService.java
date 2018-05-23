@@ -50,9 +50,11 @@ public class DefaultNormalizeService implements NormalizeService {
                 normalizeRow.setDayOfWeek(NormalizeUtils.normalizeDayOfWeek(partResultData.getDate()));
                 double v = NormalizeUtils.normalizeTime(partResultData.getDate());
                 normalizeRow.setTime(v);
-                normalizeRow.setLatitude(NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLatitude()), neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude()));
-                normalizeRow.setLongitude(NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLongitude()), neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude()));
-                Data data1 = new Data(resultData.getCar().getId(), normalizeCarId, partResultData.getDate(), v);
+                double normalizeLatitude = NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLatitude()), neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude());
+                normalizeRow.setLatitude(normalizeLatitude);
+                double normalizeLongitude = NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLongitude()), neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude());
+                normalizeRow.setLongitude(normalizeLongitude);
+                Data data1 = new Data(resultData.getCar().getId(), normalizeCarId, partResultData.getDate(), v, partResultData.getNode().getLatitude(), normalizeLatitude, partResultData.getNode().getLongitude(), normalizeLongitude);
                 data.add(data1);
                 normalizeRows.add(normalizeRow);
             });

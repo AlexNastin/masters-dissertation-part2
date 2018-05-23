@@ -17,11 +17,24 @@ public class Data {
 
     private double time;
 
-    public Data(String id, double normalizeId, Date date, double time) {
+    private String latitude;
+
+    private double latitudeNORM;
+
+    private String longitude;
+
+    private double longitudeNORM;
+
+
+    public Data(String id, double normalizeId, Date date, double time, String latitude, double latitudeNORM, String longitude, double longitudeNORM) {
         this.id = id;
         this.normalizeId = normalizeId;
         this.date = date;
         this.time = time;
+        this.latitude = latitude;
+        this.latitudeNORM = latitudeNORM;
+        this.longitude = longitude;
+        this.longitudeNORM = longitudeNORM;
     }
 
     public String toFileString(String delimiter) {
@@ -29,7 +42,11 @@ public class Data {
         result.append(id).append(delimiter);
         result.append(normalizeId).append(delimiter);
         result.append(date).append(delimiter);
-        result.append(time);
+        result.append(time).append(delimiter);
+        result.append(latitude).append(delimiter);
+        result.append(latitudeNORM).append(delimiter);
+        result.append(longitude).append(delimiter);
+        result.append(longitudeNORM);
         return result.toString();
     }
 }

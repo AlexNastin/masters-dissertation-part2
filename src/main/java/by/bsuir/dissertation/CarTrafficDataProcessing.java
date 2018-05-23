@@ -75,7 +75,10 @@ public class CarTrafficDataProcessing implements LearningEventListener {
             neuralNet.calculate();
             double[] networkOutput = neuralNet.getOutput();
 
-            LOGGER.info("Input: " + Arrays.toString(row.getInput()) + " Output: " + Arrays.toString(networkOutput));
+            double denormalize1 = NormalizeUtils.denormalize(networkOutput[0], neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude());
+            double denormalize2 = NormalizeUtils.denormalize(networkOutput[1], neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude());
+
+            LOGGER.info("Input: " + Arrays.toString(row.getInput()) + " Output: " + Arrays.toString(networkOutput) + " Coordinate denormalize: " + denormalize1 + " / " + denormalize2);
         });
     }
 
