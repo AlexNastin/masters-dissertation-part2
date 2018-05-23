@@ -2,6 +2,8 @@ package by.bsuir.dissertation;
 
 import by.bsuir.dissertation.configuration.NeuralNetworkConfiguration;
 import by.bsuir.dissertation.entity.exchange.ResponseData;
+import by.bsuir.dissertation.entity.neuroph.Data;
+import by.bsuir.dissertation.repository.DataRepository;
 import by.bsuir.dissertation.util.NormalizeUtils;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.events.LearningEvent;
@@ -32,10 +34,12 @@ public class CarTrafficDataProcessing implements LearningEventListener {
     private MultiLayerPerceptron neuralNet;
 
     private NeuralNetworkConfiguration neuralNetworkConfiguration;
+    private DataRepository dataRepository;
 
     @Autowired
-    public CarTrafficDataProcessing(NeuralNetworkConfiguration neuralNetworkConfiguration) {
+    public CarTrafficDataProcessing(NeuralNetworkConfiguration neuralNetworkConfiguration, DataRepository dataRepository) {
         this.neuralNetworkConfiguration = neuralNetworkConfiguration;
+        this.dataRepository = dataRepository;
         run();
     }
 
@@ -97,9 +101,15 @@ public class CarTrafficDataProcessing implements LearningEventListener {
         neuralNet.setInput(resultInput);
         neuralNet.calculate();
         double[] networkOutput = neuralNet.getOutput();
-        ResponseData responseData = new ResponseData(NormalizeUtils.denormalize(networkOutput[0], neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude()),
-                NormalizeUtils.denormalize(networkOutput[1], neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude()));
-        LOGGER.info("ID: " + id + "Date: " + date);
+
+	    Data originalData = dataRepository.findOne(id);
+	    double denormalizeLatitude = NormalizeUtils.denormalize(networkOutput[0], neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude());
+	    double denormalizeLongitude = NormalizeUtils.denormalize(networkOutput[1], neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude());
+	    ResponseData responseData = new ResponseData(denormalizeLatitude, denormalizeLongitude);
+	    int errorDistance = NormalizeUtils
+			    .distanceCalculate(originalData.getLatitude(), originalData.getLongitude(), String.valueOf(denormalizeLatitude), String.valueOf(denormalizeLongitude));
+	    LOGGER.info("ERROR DISTANCE: " + errorDistance);
+	    LOGGER.info("ID: " + id + "Date: " + date);
         LOGGER.info("Input: " + Arrays.toString(resultInput) + " Output: " + Arrays.toString(networkOutput));
         return responseData;
     }

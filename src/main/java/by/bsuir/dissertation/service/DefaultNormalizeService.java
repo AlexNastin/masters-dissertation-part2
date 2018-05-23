@@ -1,6 +1,7 @@
 package by.bsuir.dissertation.service;
 
 import by.bsuir.dissertation.configuration.NeuralNetworkConfiguration;
+import by.bsuir.dissertation.entity.graph.Node;
 import by.bsuir.dissertation.entity.neuroph.Data;
 import by.bsuir.dissertation.entity.neuroph.NormalizeRow;
 import by.bsuir.dissertation.entity.result.ResultData;
@@ -54,13 +55,18 @@ public class DefaultNormalizeService implements NormalizeService {
                 normalizeRow.setDayOfWeek(NormalizeUtils.normalizeDayOfWeek(partResultData.getDate()));
                 double v = NormalizeUtils.normalizeTime(partResultData.getDate());
                 normalizeRow.setTime(v);
-                double normalizeLatitude = NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLatitude()), neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude());
-                normalizeRow.setLatitude(normalizeLatitude);
-                double normalizeLongitude = NormalizeUtils.normalize(Double.valueOf(partResultData.getNode().getLongitude()), neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude());
-                normalizeRow.setLongitude(normalizeLongitude);
-                Data data1 = new Data(resultData.getCar().getId(), normalizeCarId, partResultData.getDate(), v, partResultData.getNode().getLatitude(), normalizeLatitude, partResultData.getNode().getLongitude(), normalizeLongitude);
-                data.add(data1);
-                normalizeRows.add(normalizeRow);
+	            Node node = partResultData.getNode();
+	            if (node != null) {
+		            double normalizeLatitude = NormalizeUtils
+				            .normalize(Double.valueOf(node.getLatitude()), neuralNetworkConfiguration.getMinLatitude(), neuralNetworkConfiguration.getMaxLatitude());
+		            normalizeRow.setLatitude(normalizeLatitude);
+		            double normalizeLongitude = NormalizeUtils
+				            .normalize(Double.valueOf(node.getLongitude()), neuralNetworkConfiguration.getMinLongitude(), neuralNetworkConfiguration.getMaxLongitude());
+		            normalizeRow.setLongitude(normalizeLongitude);
+		            Data data1 = new Data(resultData.getCar().getId(), normalizeCarId, partResultData.getDate(), v, node.getLatitude(), normalizeLatitude, node.getLongitude(), normalizeLongitude);
+		            data.add(data1);
+		            normalizeRows.add(normalizeRow);
+	            }
             });
         });
         saveToFile(normalizeRows);
